@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Dec 05 00:20:14 IST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0176-2f17-22ce-00000e17bb88 
+on database directory C:\Users\NEELA_kpwhyff\OneDrive\Documents\NetBeansProjects\Ecart\EcartDb with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/C:/Users/NEELA_kpwhyff/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_271-b09
+user.dir=C:\Users\NEELA_kpwhyff\OneDrive\Documents\NetBeansProjects\Ecart
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
