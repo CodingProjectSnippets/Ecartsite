@@ -103,11 +103,12 @@ public class LoginFrmae extends JFrame implements ActionListener {
                 }
 
                 if (dbUsername.contains(userText) && dbPwd.contains(pwdText)) {
-                    JOptionPane.showMessageDialog(this, "Login Successful");
+                    //JOptionPane.showMessageDialog(this, "Login Successful");
                     this.setVisible(false);
-                    WelcomePage wp = new WelcomePage();
-                    wp.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    wp.setVisible(true);
+                    this.dispose();
+                   SalePage sp = new SalePage();
+                    sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    sp.setVisible(true);
 
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid Username or Password");
