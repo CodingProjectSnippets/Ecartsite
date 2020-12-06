@@ -36,7 +36,7 @@ public class SalePage extends javax.swing.JFrame {
     ArrayList<ProductBean> productlist;
     DatabaseValues dbvalues;
     String username;
-
+    
     public SalePage(String userName) {
         this.username = userName;
         con = DbUtil.getDbConnection();
@@ -48,14 +48,15 @@ public class SalePage extends javax.swing.JFrame {
         validateAdmin();
         
     }
-    public void validateAdmin(){
-        if (!username.equals("sandeep")) {
+    
+    public void validateAdmin() {
+        if (!username.equals(props.getProperty("adminname"))) {
             jButton3.setVisible(false);
         }
     }
-
+    
     public SalePage() {
-
+        
     }
 
     /**
@@ -184,65 +185,75 @@ public class SalePage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String str1 = JOptionPane.showInputDialog("Please enter product number");
+        
         int k = 0;
-
-        while (k != 1) {
-            try {
-
-                int productid = Integer.parseInt(str1);
-
-                k = 1;
-
-                System.out.println(productid);
-                initialcheck(productid);
-                if (!productlist.isEmpty()) {
-                    System.out.println(productlist.size() + "size");
-                    ArrayList<Integer> productidslist = new ArrayList<>();
-
-                    for (ProductBean bean : productlist) {
-                        if (bean.getProductid() == productid) {
-                            if (dbvalues.getDbquantity() <= bean.getCounter()) {
-                                dbvalues.setOverflow(true);
-                            }
-                        }
-                        productidslist.add(bean.getProductid());
-                    }
-                    if (!dbvalues.isOverflow()) {
-
-                        if (productidslist.contains(productid)) {
-                            for (ProductBean bean : productlist) {
-
-                                if (bean.getProductid() == productid) {
-                                    bean.setCounter(1);
+        if (str1 != null && !(str1.equals(""))) {
+            while (k != 1) {
+                try {
+                    
+                    int productid = Integer.parseInt(str1);
+                    
+                    k = 1;
+                    
+                    System.out.println(productid);
+                    initialcheck(productid);
+                    if (!productlist.isEmpty()) {
+                        System.out.println(productlist.size() + "size");
+                        ArrayList<Integer> productidslist = new ArrayList<>();
+                        
+                        for (ProductBean bean : productlist) {
+                            if (bean.getProductid() == productid) {
+                                if (dbvalues.getDbquantity() <= bean.getCounter()) {
+                                    dbvalues.setOverflow(true);
                                 }
                             }
-                        } else {
-                            addProduct(productid);
+                            productidslist.add(bean.getProductid());
                         }
+                        if (!dbvalues.isOverflow()) {
+                            
+                            if (productidslist.contains(productid)) {
+                                for (ProductBean bean : productlist) {
+                                    
+                                    if (bean.getProductid() == productid) {
+                                        bean.setCounter(1);
+                                    }
+                                }
+                            } else {
+                                addProduct(productid);
+                            }
+                        } else {
+                            showwarnmessage("you have exceeded items");
+                        }
+                    } else if (dbvalues.getDbquantity() > 0) {
+                        
+                        addProduct(productid);
                     } else {
-                        showwarnmessage("you have exceeded items");
+                        showwarnmessage("out of stock");
                     }
-                } else if (dbvalues.getDbquantity() > 0) {
-
-                    addProduct(productid);
-                } else {
-                    showwarnmessage("out of stock");
+                    
+                } catch (NumberFormatException e) {
+                    k = 0;
+                    str1 = JOptionPane.showInputDialog("Please enter Valid number");
+                    if (str1 == null || str1.equals("")) {
+                        k = 1;
+                    }
+                    
                 }
-
-            } catch (NumberFormatException e) {
-                k = 0;
-                str1 = JOptionPane.showInputDialog("Please enter Valid number");
             }
+        } else if (str1.equals("")) {
+            JOptionPane.showMessageDialog(null, "please enter valid data");
         }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    
     public void showwarnmessage(String message) {
         JOptionPane.showConfirmDialog(null, message, "Select an Option...",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
     }
-
+    
     public void initialcheck(int productid) {
         try {
             ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
@@ -252,16 +263,16 @@ public class SalePage extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
-
+    
     public void addProduct(int productid) {
         try {
             ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
             while (result.next()) {
-
+                
                 ProductBean bean = new ProductBean();
-
+                
                 dbvalues.setDbquantity(result.getInt("quantity"));
                 bean.setProductid(result.getInt("productid"));
                 bean.setProductname(result.getString("productname"));
@@ -272,11 +283,11 @@ public class SalePage extends javax.swing.JFrame {
                 bean.setUnreason(result.getString("unreason"));
                 bean.setCounter(1);
                 bean.setExist(true);
-
+                
                 productlist.add(bean);
-
+                
                 System.out.println(bean);
-
+                
             }
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class
@@ -301,7 +312,7 @@ public class SalePage extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         this.dispose();
-        AdminPage adminPage = new AdminPage();
+        AdminPage adminPage = new AdminPage(username);
         adminPage.setExtendedState(JFrame.MAXIMIZED_BOTH);
         adminPage.setVisible(true);
 
@@ -347,23 +358,23 @@ public class SalePage extends javax.swing.JFrame {
     }
     Connection con = null;
     Properties props;
-
+    
     private void table_update() {
         int CC;
         try {
             ResultSet Rs = DbUtil.getQueryResult(props.getProperty("productsquery"), con);
-
+            
             ResultSetMetaData RSMD = Rs.getMetaData();
             CC = RSMD.getColumnCount();
             DefaultTableModel DFT = (DefaultTableModel) jTable1.getModel();
             jTable1.setRowHeight(30);
             jTable1.setEnabled(false);
-
+            
             DFT.setRowCount(0);
-
+            
             while (Rs.next()) {
                 Vector v2 = new Vector();
-
+                
                 for (int ii = 1; ii <= CC; ii++) {
                     v2.add(Rs.getInt("productid"));
                     v2.add(Rs.getString("productname"));

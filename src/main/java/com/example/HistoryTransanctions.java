@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Properties;
 import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -35,10 +37,11 @@ public class HistoryTransanctions extends javax.swing.JFrame {
         props = PropertiesReader.readPropertiesFile();
         initComponents();
         setHistorydata();
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 
     public HistoryTransanctions() {
-
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 
     /**

@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 /**
@@ -34,17 +35,20 @@ public class EditpopupForm extends javax.swing.JFrame {
     Properties props;
     int productid;
     AdminPage admin;
+
     public EditpopupForm(int productid, AdminPage admin) {
-        this.admin=admin;
+        this.admin = admin;
         this.productid = productid;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setSelectedProductDetails();
+
     }
-    
+
     public EditpopupForm() {
-        
+
     }
 
     /**
@@ -204,13 +208,13 @@ public class EditpopupForm extends javax.swing.JFrame {
             ArrayList<Integer> Porductidslist = new ArrayList<>();
             while (Rs.next()) {
                 Porductidslist.add(Rs.getInt("productid"));
-                
+
             }
             if (Validateform()) {
-                
+
                 ProductBean newbean = createNewBean();
                 int rowsinserted = DbUtil.editqueryResult(props.getProperty("editproductquery"), newbean);
-                
+
                 if (rowsinserted != 0) {
                     JOptionPane.showMessageDialog(this, "updated successfully");
                     this.dispose();
@@ -220,11 +224,11 @@ public class EditpopupForm extends javax.swing.JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, "Not inserted");
                 }
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "hey Please fill manadatery fields");
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(PopupFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -234,10 +238,10 @@ public class EditpopupForm extends javax.swing.JFrame {
         this.dispose();
         admin.setEnabled(true);
         admin.setVisible(true);
-        
-        
+
+
     }//GEN-LAST:event_jButton2ActionPerformed
-    
+
     public ProductBean createNewBean() {
         ProductBean newbean = new ProductBean();
         newbean.setProductid(productid);
@@ -249,15 +253,15 @@ public class EditpopupForm extends javax.swing.JFrame {
         newbean.setUnreason(jTextField8.getText());
         return newbean;
     }
-    
+
     public int praseStr2Int(String text) {
         return Integer.parseInt(text);
     }
-    
+
     public double praseStr2Double(String text) {
         return Double.parseDouble(text);
     }
-    
+
     public boolean Validateform() {
         StringBuilder errorText = new StringBuilder();
         errorText.append(checkTestbox(jTextField1, false));
@@ -267,13 +271,13 @@ public class EditpopupForm extends javax.swing.JFrame {
         errorText.append(checkTestbox(jTextField7, false));
         errorText.append(checkTestbox(jTextField8, false));
         System.out.println(errorText.length() + "sandeep length");
-        
+
         return errorText.length() == 0;
-        
+
     }
-    
+
     public String checkTestbox(JTextField textField, boolean isnum) {
-        
+
         String reason = "";
         if (textField.getText().length() == 0) {
             //textField.setBackground(Color.red);
@@ -290,12 +294,12 @@ public class EditpopupForm extends javax.swing.JFrame {
             } else {
                 textField.setBorder(new LineBorder(Color.GREEN, 1));
             }
-            
+
         }
-        
+
         return reason;
     }
-    
+
     public static boolean isNumeric(String strNum) {
         try {
             Double.parseDouble(strNum);
@@ -309,30 +313,30 @@ public class EditpopupForm extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public void setSelectedProductDetails() {
-        
+
         ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
-        
+
         setForm(result);
-        
+
     }
-    
+
     public void setForm(ResultSet result) {
         try {
             while (result.next()) {
-                
+
                 jTextField1.setText(result.getString("productname"));
                 jTextField2.setText(String.valueOf(result.getDouble("price")));
                 jTextField4.setText(String.valueOf(result.getInt("quantity")));
                 jTextField6.setText(result.getString("barcodenum"));
                 jTextField7.setText(result.getString("description"));
                 jTextField8.setText(result.getString("unreason"));
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(EditpopupForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

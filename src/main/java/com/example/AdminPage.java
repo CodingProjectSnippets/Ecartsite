@@ -28,12 +28,18 @@ public class AdminPage extends javax.swing.JFrame {
      */
     Connection con = null;
     Properties props;
+    String username;
 
-    public AdminPage() {
+    public AdminPage(String username) {
+        this.username = username;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
         table_update();
+    }
+
+    public AdminPage() {
+
     }
 
     /**
@@ -195,16 +201,37 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String str1 = JOptionPane.showInputDialog("Please enter product id to edit");
-        if (str1 != null) {
-            this.setEnabled(false);
-            EditpopupForm editpopup = new EditpopupForm(Integer.parseInt(str1), this);
-            editpopup.setVisible(true);
+        int k = 0;
+
+        if (str1 != null && !(str1.equals(""))) {
+            while (k == 0) {
+                try {
+                    int input = Integer.parseInt(str1);
+                    EditpopupForm editpopup = new EditpopupForm(input, this);
+                    this.setEnabled(false);
+                    editpopup.setVisible(true);
+                    k = 1;
+                } catch (NumberFormatException e) {
+
+                    str1 = JOptionPane.showInputDialog("Please enter Valid number");
+                    if (str1 == null) {
+                        k = 1;
+                    }
+                    if (str1.equals("")) {
+                        JOptionPane.showMessageDialog(null, "please enter valid date");
+                        k = 1;
+                    }
+
+                }
+            }
+        } else if (str1.equals("")) {
+            JOptionPane.showMessageDialog(null, "please enter valid date");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         this.dispose();
-        SalePage sp = new SalePage();
+        SalePage sp = new SalePage(username);
         sp.setVisible(true);
         sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
