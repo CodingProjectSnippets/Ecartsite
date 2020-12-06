@@ -29,6 +29,7 @@ import javax.lang.model.SourceVersion;
 public class LoginFrmae extends JFrame implements ActionListener {
 
     Container container = getContentPane();
+    JLabel LoginLabel = new JLabel("Welcome To Worlds Great Shopping Experience of ECART");
     JLabel userLabel = new JLabel("USERNAME");
     JLabel passwordLabel = new JLabel("PASSWORD");
     JTextField userTextField = new JTextField();
@@ -42,11 +43,13 @@ public class LoginFrmae extends JFrame implements ActionListener {
 
     LoginFrmae() {
         setLayoutManager();
+        showPassword.setBackground(Color.lightGray);
         setLocationAndSize();
         addComponentsToContainer();
         addActionEvent();
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
+        this.getContentPane().setBackground(Color.LIGHT_GRAY);
 
     }
 
@@ -56,17 +59,21 @@ public class LoginFrmae extends JFrame implements ActionListener {
     }
 
     private void setLocationAndSize() {
-        userLabel.setBounds(50, 150, 100, 30);
-        passwordLabel.setBounds(50, 220, 100, 30);
-        userTextField.setBounds(150, 150, 150, 30);
-        passwordField.setBounds(150, 220, 150, 30);
-        showPassword.setBounds(150, 250, 150, 30);
-        loginButton.setBounds(50, 300, 100, 30);
-        resetButton.setBounds(200, 300, 100, 30);
+        Font font = new Font("Courier", Font.BOLD, 16);
+        LoginLabel.setFont(font);
+        LoginLabel.setBounds(400, 100, 600, 30);
+        userLabel.setBounds(450, 150, 100, 30);
+        passwordLabel.setBounds(450, 220, 100, 30);
+        userTextField.setBounds(650, 150, 150, 30);
+        passwordField.setBounds(650, 220, 150, 30);
+        showPassword.setBounds(650, 250, 150, 30);
+        loginButton.setBounds(450, 300, 100, 30);
+        resetButton.setBounds(650, 300, 100, 30);
 
     }
 
     private void addComponentsToContainer() {
+        container.add(LoginLabel);
         container.add(userLabel);
         container.add(passwordLabel);
         container.add(userTextField);
@@ -106,7 +113,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
                     //JOptionPane.showMessageDialog(this, "Login Successful");
                     this.setVisible(false);
                     this.dispose();
-                    SalePage sp = new SalePage( userText);
+                    SalePage sp = new SalePage(userText);
                     sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     sp.setVisible(true);
 

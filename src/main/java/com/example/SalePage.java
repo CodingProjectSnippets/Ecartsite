@@ -9,11 +9,14 @@ import com.beans.DatabaseValues;
 import com.beans.ProductBean;
 import com.utils.DbUtil;
 import com.utils.PropertiesReader;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -36,27 +39,32 @@ public class SalePage extends javax.swing.JFrame {
     ArrayList<ProductBean> productlist;
     DatabaseValues dbvalues;
     String username;
-    
+
     public SalePage(String userName) {
         this.username = userName;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
+        jLabel1.setText("Store Front – Sales Personnel Login (" + username + ")");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        Date date = new Date();
+        jLabel2.setText("Today's Date : " + formatter.format(date));
         table_update();
         productlist = new ArrayList<>();
         dbvalues = new DatabaseValues();
+        this.getContentPane().setBackground(Color.LIGHT_GRAY);
         validateAdmin();
-        
+
     }
-    
+
     public void validateAdmin() {
         if (!username.equals(props.getProperty("adminname"))) {
             jButton3.setVisible(false);
         }
     }
-    
+
     public SalePage() {
-        
+
     }
 
     /**
@@ -118,7 +126,7 @@ public class SalePage extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(72, 72, 72))))
+                        .addGap(36, 36, 36))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton1)
@@ -188,22 +196,22 @@ public class SalePage extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String str1 = JOptionPane.showInputDialog("Please enter product number");
-        
+
         int k = 0;
         if (str1 != null && !(str1.equals(""))) {
             while (k != 1) {
                 try {
-                    
+
                     int productid = Integer.parseInt(str1);
-                    
+
                     k = 1;
-                    
+
                     System.out.println(productid);
                     initialcheck(productid);
                     if (!productlist.isEmpty()) {
                         System.out.println(productlist.size() + "size");
                         ArrayList<Integer> productidslist = new ArrayList<>();
-                        
+
                         for (ProductBean bean : productlist) {
                             if (bean.getProductid() == productid) {
                                 if (dbvalues.getDbquantity() <= bean.getCounter()) {
@@ -213,10 +221,10 @@ public class SalePage extends javax.swing.JFrame {
                             productidslist.add(bean.getProductid());
                         }
                         if (!dbvalues.isOverflow()) {
-                            
+
                             if (productidslist.contains(productid)) {
                                 for (ProductBean bean : productlist) {
-                                    
+
                                     if (bean.getProductid() == productid) {
                                         bean.setCounter(1);
                                     }
@@ -228,32 +236,32 @@ public class SalePage extends javax.swing.JFrame {
                             showwarnmessage("you have exceeded items");
                         }
                     } else if (dbvalues.getDbquantity() > 0) {
-                        
+
                         addProduct(productid);
                     } else {
                         showwarnmessage("out of stock");
                     }
-                    
+
                 } catch (NumberFormatException e) {
                     k = 0;
                     str1 = JOptionPane.showInputDialog("Please enter Valid number");
                     if (str1 == null || str1.equals("")) {
                         k = 1;
                     }
-                    
+
                 }
             }
         } else if (str1.equals("")) {
             JOptionPane.showMessageDialog(null, "please enter valid data");
         }
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
-    
+
     public void showwarnmessage(String message) {
         JOptionPane.showConfirmDialog(null, message, "Select an Option...",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
     }
-    
+
     public void initialcheck(int productid) {
         try {
             ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
@@ -263,16 +271,16 @@ public class SalePage extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void addProduct(int productid) {
         try {
             ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
             while (result.next()) {
-                
+
                 ProductBean bean = new ProductBean();
-                
+
                 dbvalues.setDbquantity(result.getInt("quantity"));
                 bean.setProductid(result.getInt("productid"));
                 bean.setProductname(result.getString("productname"));
@@ -283,11 +291,11 @@ public class SalePage extends javax.swing.JFrame {
                 bean.setUnreason(result.getString("unreason"));
                 bean.setCounter(1);
                 bean.setExist(true);
-                
+
                 productlist.add(bean);
-                
+
                 System.out.println(bean);
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class
@@ -358,23 +366,23 @@ public class SalePage extends javax.swing.JFrame {
     }
     Connection con = null;
     Properties props;
-    
+
     private void table_update() {
         int CC;
         try {
             ResultSet Rs = DbUtil.getQueryResult(props.getProperty("productsquery"), con);
-            
+
             ResultSetMetaData RSMD = Rs.getMetaData();
             CC = RSMD.getColumnCount();
             DefaultTableModel DFT = (DefaultTableModel) jTable1.getModel();
             jTable1.setRowHeight(30);
             jTable1.setEnabled(false);
-            
+
             DFT.setRowCount(0);
-            
+
             while (Rs.next()) {
                 Vector v2 = new Vector();
-                
+
                 for (int ii = 1; ii <= CC; ii++) {
                     v2.add(Rs.getInt("productid"));
                     v2.add(Rs.getString("productname"));

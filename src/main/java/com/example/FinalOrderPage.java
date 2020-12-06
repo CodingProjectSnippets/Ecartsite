@@ -8,6 +8,7 @@ package com.example;
 import com.beans.ProductBean;
 import com.utils.DbUtil;
 import com.utils.PropertiesReader;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -41,7 +42,9 @@ public class FinalOrderPage extends javax.swing.JFrame {
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
+        this.getContentPane().setBackground(Color.LIGHT_GRAY);
         displayproducts();
+         
     }
 
     public FinalOrderPage() {
