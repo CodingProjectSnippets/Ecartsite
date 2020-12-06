@@ -21,10 +21,8 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -41,9 +39,11 @@ public class SalePage extends javax.swing.JFrame {
     String username;
 
     public SalePage(String userName) {
+
         this.username = userName;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
+
         initComponents();
         jLabel1.setText("Store Front – Sales Personnel Login (" + username + ")");
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -52,12 +52,11 @@ public class SalePage extends javax.swing.JFrame {
         table_update();
         productlist = new ArrayList<>();
         dbvalues = new DatabaseValues();
-        this.getContentPane().setBackground(Color.LIGHT_GRAY);
         validateAdmin();
 
     }
 
-    public void validateAdmin() {
+    private void validateAdmin() {
         if (!username.equals(props.getProperty("adminname"))) {
             jButton3.setVisible(false);
         }
@@ -155,7 +154,7 @@ public class SalePage extends javax.swing.JFrame {
 
             },
             new String [] {
-                "productid", "productname", "price", "quantity", "barcode", "desc", "unreason"
+                "productid", "productname", "price", "quantity", "barcode", "description", "Reason for Out of Sock"
             }
         ) {
             Class[] types = new Class [] {
@@ -186,8 +185,8 @@ public class SalePage extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -195,66 +194,68 @@ public class SalePage extends javax.swing.JFrame {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String str1 = JOptionPane.showInputDialog("Please enter product number");
+        if (evt.getSource() == jButton1) {
+            String str1 = JOptionPane.showInputDialog("Please enter product number");
 
-        int k = 0;
-        if (str1 != null && !(str1.equals(""))) {
-            while (k != 1) {
-                try {
+            int k = 0;
+            if (str1 != null && !(str1.equals(""))) {
+                while (k != 1) {
+                    try {
 
-                    int productid = Integer.parseInt(str1);
+                        int productid = Integer.parseInt(str1);
+                        k = 1;
+                        initialcheck(productid);
+                        if (!productlist.isEmpty()) {
+                            ArrayList<Integer> productidslist = new ArrayList<>();
 
-                    k = 1;
-
-                    System.out.println(productid);
-                    initialcheck(productid);
-                    if (!productlist.isEmpty()) {
-                        System.out.println(productlist.size() + "size");
-                        ArrayList<Integer> productidslist = new ArrayList<>();
-
-                        for (ProductBean bean : productlist) {
-                            if (bean.getProductid() == productid) {
-                                if (dbvalues.getDbquantity() <= bean.getCounter()) {
-                                    dbvalues.setOverflow(true);
-                                }
-                            }
-                            productidslist.add(bean.getProductid());
-                        }
-                        if (!dbvalues.isOverflow()) {
-
-                            if (productidslist.contains(productid)) {
-                                for (ProductBean bean : productlist) {
-
-                                    if (bean.getProductid() == productid) {
-                                        bean.setCounter(1);
+                            productlist.stream().map(bean -> {
+                                if (bean.getProductid() == productid) {
+                                    if (dbvalues.getDbquantity() <= bean.getCounter()) {
+                                        dbvalues.setOverflow(true);
                                     }
                                 }
+                                return bean;
+                            }).forEachOrdered(bean -> {
+                                productidslist.add(bean.getProductid());
+                            });
+                            if (!dbvalues.isOverflow()) {
+
+                                if (productidslist.contains(productid)) {
+                                    productlist.stream().filter(bean -> (bean.getProductid() == productid)).forEachOrdered(bean -> {
+                                        bean.setCounter(1);
+                                    });
+                                } else {
+                                    addProduct(productid);
+                                }
                             } else {
-                                addProduct(productid);
+                                showwarnmessage("you have exceeded items");
                             }
+                        } else if (dbvalues.getDbquantity() > 0) {
+
+                            addProduct(productid);
                         } else {
-                            showwarnmessage("you have exceeded items");
+                            showwarnmessage(" selected product does not Exists in stock please select Existing Items");
                         }
-                    } else if (dbvalues.getDbquantity() > 0) {
 
-                        addProduct(productid);
-                    } else {
-                        showwarnmessage("out of stock");
+                    } catch (NumberFormatException e) {
+                        k = 0;
+                        str1 = JOptionPane.showInputDialog("Please enter Valid number");
+                        if (str1 == null) {
+                            k = 1;
+                        } else if (str1.equals("")) {
+                            JOptionPane.showMessageDialog(null, "Please Enter Valid Productid");
+                            k = 1;
+
+                        }
+
                     }
-
-                } catch (NumberFormatException e) {
-                    k = 0;
-                    str1 = JOptionPane.showInputDialog("Please enter Valid number");
-                    if (str1 == null || str1.equals("")) {
-                        k = 1;
-                    }
-
+                }
+            } else {
+                if (str1 != null) {
+                    JOptionPane.showMessageDialog(null, "please enter valid data");
                 }
             }
-        } else if (str1.equals("")) {
-            JOptionPane.showMessageDialog(null, "please enter valid data");
         }
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public void showwarnmessage(String message) {
@@ -294,8 +295,6 @@ public class SalePage extends javax.swing.JFrame {
 
                 productlist.add(bean);
 
-                System.out.println(bean);
-
             }
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class
@@ -305,25 +304,28 @@ public class SalePage extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO Finalorderadd your handling code here:
-        if (productlist.size() != 0) {
-            this.dispose();
-            FinalOrderPage fp = new FinalOrderPage(productlist, username);
-            //fp.addproducts(productlist);
-            this.setEnabled(false);
-            fp.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            fp.setVisible(true);
-        } else {
-            showwarnmessage("hey you dont selected items please select items to place order :)");
+        if (evt.getSource() == jButton2) {
+            if (!productlist.isEmpty()) {
+                this.dispose();
+                FinalOrderPage fp = new FinalOrderPage(productlist, username);
+                this.setEnabled(false);
+                fp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                fp.setVisible(true);
+                fp.setBackground(Color.LIGHT_GRAY);
+            } else {
+                showwarnmessage("hey you dont selected items please select items to place order :)");
+            }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        this.dispose();
-        AdminPage adminPage = new AdminPage(username);
-        adminPage.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        adminPage.setVisible(true);
-
+        if (evt.getSource() == jButton3) {
+            this.dispose();
+            AdminPage adminPage = new AdminPage(username);
+            adminPage.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            adminPage.setVisible(true);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
@@ -342,26 +344,17 @@ public class SalePage extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SalePage.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SalePage.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SalePage.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(SalePage.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SalePage().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new SalePage().setVisible(true);
         });
     }
     Connection con = null;
@@ -394,8 +387,8 @@ public class SalePage extends javax.swing.JFrame {
                 }
                 DFT.addRow(v2);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQL Excetion occured");
         }
     }
 

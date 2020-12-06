@@ -16,11 +16,9 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 /**
@@ -34,14 +32,19 @@ public class PopupFrame extends javax.swing.JFrame {
      */
     Connection con = null;
     Properties props;
-
-    public PopupFrame() {
-         
+    String username;
+  AdminPage page;
+    public PopupFrame(String username, AdminPage page) {
+        this.page=page;
+        this.username = username;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
-       
         initComponents();
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+    }
+
+    public PopupFrame() {
+
     }
 
     /**
@@ -202,46 +205,53 @@ public class PopupFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        this.dispose();
-        AdminPage adminPage = new AdminPage();
-        adminPage.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        adminPage.setVisible(true);
+        if (evt.getSource() == jButton2) {
+            this.dispose();
+            page.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            page.setEnabled(true);
+            page.setVisible(true);
+            
+           
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
-        try {
-            ResultSet Rs = DbUtil.getQueryResult(props.getProperty("distinctproductid"), con);
-            ArrayList<Integer> Porductidslist = new ArrayList<>();
-            while (Rs.next()) {
-                Porductidslist.add(Rs.getInt("productid"));
-
-            }
-            if (Validateform()) {
-                if (Porductidslist.contains(praseStr2Int(jTextField1.getText()))) {
-                    JOptionPane.showMessageDialog(this, "Product id Already exists");
-                } {
-                    ProductBean newbean = createNewBean();
-                    int rowsinserted = DbUtil.insertqueryResult(props.getProperty("insertbeanquery"), newbean);
-
-                    if (rowsinserted != 0) {
-                        JOptionPane.showMessageDialog(this, "inserted successfully");
-                        this.dispose();
-                        AdminPage admin = new AdminPage();
-                        admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                        admin.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Not inserted");
-                    }
+        if (evt.getSource() == jButton1) {
+            try {
+                ResultSet Rs = DbUtil.getQueryResult(props.getProperty("distinctproductid"), con);
+                ArrayList<Integer> Porductidslist = new ArrayList<>();
+                while (Rs.next()) {
+                    Porductidslist.add(Rs.getInt("productid"));
 
                 }
+                if (Validateform()) {
+                    if (Porductidslist.contains(praseStr2Int(jTextField1.getText()))) {
+                        JOptionPane.showMessageDialog(this, "Product id Already exists");
+                    }
+                    {
+                        ProductBean newbean = createNewBean();
+                        int rowsinserted = DbUtil.insertqueryResult(props.getProperty("insertbeanquery"), newbean);
 
-            } else {
-                JOptionPane.showMessageDialog(this, "hey Please fill manadatery fields");
+                        if (rowsinserted != 0) {
+                            JOptionPane.showMessageDialog(this, "inserted successfully");
+                            this.dispose();
+                            page.dispose();
+                            AdminPage admin = new AdminPage(username);
+                            admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                            admin.setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Not inserted");
+                        }
+
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "hey Please fill manadatery fields");
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(PopupFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(PopupFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -277,8 +287,6 @@ public class PopupFrame extends javax.swing.JFrame {
         errorText.append(checkTestbox(jTextField4, true));
         errorText.append(checkTestbox(jTextField5, false));
         errorText.append(checkTestbox(jTextField6, false));
-        System.out.println(errorText.length() + "sandeep length");
-
         return errorText.length() == 0;
 
     }
@@ -332,22 +340,16 @@ public class PopupFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PopupFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PopupFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PopupFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(PopupFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PopupFrame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new PopupFrame().setVisible(true);
         });
     }
 

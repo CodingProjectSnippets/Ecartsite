@@ -41,8 +41,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="128" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="158" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -147,8 +147,8 @@
                 <Column editable="true" title="price" type="java.lang.Double"/>
                 <Column editable="true" title="quantity" type="java.lang.Integer"/>
                 <Column editable="true" title="barcode" type="java.lang.String"/>
-                <Column editable="true" title="desc" type="java.lang.String"/>
-                <Column editable="true" title="unreason" type="java.lang.String"/>
+                <Column editable="true" title="description" type="java.lang.String"/>
+                <Column editable="true" title="Reason for Out of Sock" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

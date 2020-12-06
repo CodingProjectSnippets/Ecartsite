@@ -10,10 +10,10 @@ import com.utils.PropertiesReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -37,11 +37,11 @@ public class HistoryTransanctions extends javax.swing.JFrame {
         props = PropertiesReader.readPropertiesFile();
         initComponents();
         setHistorydata();
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
     }
 
     public HistoryTransanctions() {
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
     }
 
     /**
@@ -127,10 +127,11 @@ public class HistoryTransanctions extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.dispose();
-        finalOrderPage.setEnabled(true);
-        finalOrderPage.setVisible(true);
-
+        if (evt.getSource() == jButton1) {
+            this.dispose();
+            finalOrderPage.setEnabled(true);
+            finalOrderPage.setVisible(true);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -149,29 +150,22 @@ public class HistoryTransanctions extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(HistoryTransanctions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(HistoryTransanctions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(HistoryTransanctions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(HistoryTransanctions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new HistoryTransanctions().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new HistoryTransanctions().setVisible(true);
         });
     }
 
-    public void setHistorydata() {
+    private void setHistorydata() {
         int CC;
         try {
-            System.out.println(props.getProperty("Historydata") + "'" + username + "'");
             ResultSet Rs = DbUtil.getQueryResult(props.getProperty("Historydata") + "'" + username + "'", con);
 
             ResultSetMetaData RSMD = Rs.getMetaData();
@@ -195,8 +189,8 @@ public class HistoryTransanctions extends javax.swing.JFrame {
                 }
                 DFT.addRow(v2);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Unable to update due to storage connection issue");
         }
     }
 

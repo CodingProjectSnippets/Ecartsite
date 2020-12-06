@@ -50,7 +50,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
         addActionEvent();
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
-        this.getContentPane().setBackground(Color.LIGHT_GRAY);
+        container.setBackground(Color.LIGHT_GRAY);
 
     }
 
@@ -104,7 +104,6 @@ public class LoginFrmae extends JFrame implements ActionListener {
                 pwdText = passwordField.getText();
 
                 ResultSet result = DbUtil.getQueryResult(props.getProperty("usernamepasswordquery"), con);
-                System.out.println(result);
                 while (result.next()) {
                     dbUsername.add(result.getString("username"));
                     dbPwd.add(result.getString("password"));
@@ -117,7 +116,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
                     SalePage sp = new SalePage(userText);
                     sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     sp.setVisible(true);
-
+                    sp.setBackground(Color.LIGHT_GRAY);
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid Username or Password");
                 }

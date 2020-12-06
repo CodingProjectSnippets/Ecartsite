@@ -10,8 +10,6 @@ import com.utils.DbUtil;
 import com.utils.PropertiesReader;
 import java.awt.Color;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,9 +40,8 @@ public class FinalOrderPage extends javax.swing.JFrame {
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
-        this.getContentPane().setBackground(Color.LIGHT_GRAY);
         displayproducts();
-         
+
     }
 
     public FinalOrderPage() {
@@ -52,9 +49,6 @@ public class FinalOrderPage extends javax.swing.JFrame {
     }
     double finalamount = 0;
 
-    public void addproducts(ArrayList<ProductBean> productlist) {
-        this.productlist = productlist;
-    }
     DefaultTableModel DFT;
 
     private void displayproducts() {
@@ -66,22 +60,17 @@ public class FinalOrderPage extends javax.swing.JFrame {
             jTable1.setEnabled(false);
             DFT.setRowCount(0);
 
-            for (ProductBean bean : productlist) {
+            productlist.forEach(bean -> {
                 Vector v2 = new Vector();
-                System.out.println(bean);
-
                 v2.add(bean.getProductid());
                 v2.add(bean.getProductname());
                 v2.add(bean.getPrice());
                 v2.add(bean.getCounter());
                 v2.add(bean.getBarcode());
                 v2.add(bean.getDescription());
-                v2.add(bean.getUnreason());
-
                 DFT.addRow(v2);
                 finalamount = finalamount + bean.getCounter() * bean.getPrice();
-
-            }
+            });
             jLabel4.setText("$" + String.valueOf(finalamount));
         } catch (Exception e) {
         }
@@ -167,7 +156,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -175,11 +164,11 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
             },
             new String [] {
-                "productid", "productname", "price", "quantity", "barcodenum", "description", "unReason"
+                "productid", "productname", "price", "quantity", "barcodenum", "description"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -238,10 +227,10 @@ public class FinalOrderPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -249,68 +238,84 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (evt.getSource() == jButton1) {
-            for (int i = 0; i < productlist.size(); i++) {
-                DFT.removeRow(i);
-                DFT.removeTableModelListener(jTable1);
-                finalamount = finalamount - productlist.get(i).getPrice();
-                jLabel4.setText("$" + String.valueOf(finalamount));
+            if (!productlist.isEmpty()) {
+                for (int i = 0; i < productlist.size(); i++) {
+                    DFT.removeRow(i);
+                    DFT.removeTableModelListener(jTable1);
+                    finalamount = finalamount - productlist.get(i).getPrice();
+                    jLabel4.setText("$" + String.valueOf(finalamount));
+                    productlist.remove(i);
 
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "You dont have items to Remove");
             }
-
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        this.setEnabled(false);
-        this.dispose();
-        SalePage sp = new SalePage(username);
-        sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        sp.setVisible(true);
+        if (evt.getSource() == jButton2) {
+            this.setEnabled(false);
+            this.dispose();
+            SalePage sp = new SalePage(username);
+            sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            sp.setVisible(true);
+            sp.setBackground(Color.LIGHT_GRAY);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     String productnames = "";
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String rawQuery = props.getProperty("updateproductsquantity");
-        String updateCountQuery[] = rawQuery.split(";");
-        int resultup = 0;
-        for (ProductBean bean : productlist) {
-            productnames = productnames + bean.getProductname() + "-";
+        if (evt.getSource() == jButton3) {
+            if (!productlist.isEmpty()) {
+                String rawQuery = props.getProperty("updateproductsquantity");
+                String updateCountQuery[] = rawQuery.split(";");
+                int resultup = 0;
+                for (ProductBean bean : productlist) {
+                    productnames = productnames + bean.getProductname() + "-";
 
-            int quantity = bean.getQuantity() - bean.getCounter();
-            resultup = DbUtil.getupdateQueryResult(updateCountQuery[0] + quantity
-                    + updateCountQuery[1] + bean.getProductid(), con);
+                    int quantity = bean.getQuantity() - bean.getCounter();
+                    resultup = DbUtil.getupdateQueryResult(updateCountQuery[0] + quantity
+                            + updateCountQuery[1] + bean.getProductid(), con);
 
-        }
-        productnames = productnames.substring(0, productnames.length() - 1);
-        if (resultup != 0) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            Date date = new Date();
-            Random rand = new Random();
-            String random = "PUR" + rand.nextInt(10000);
-            String query = props.getProperty("updatepreviousresult") + "('" + formatter.format(date)
-                    + "','" + username + "','" + productnames + "'," + finalamount + ",'" + random + "')";
-            System.out.println(query);
-            int insert = DbUtil.getupdateQueryResult(query, con);
-            if (insert != 0) {
-                JOptionPane.showMessageDialog(this, "added to history");
-                JOptionPane.showMessageDialog(this, "Thank you for purchase visit again :)");
-                this.dispose();
-                SalePage sp = new SalePage(username);
-                sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                sp.setVisible(true);
+                }
+                productnames = productnames.substring(0, productnames.length() - 1);
+                if (resultup != 0) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date = new Date();
+                    Random rand = new Random();
+                    String random = "PUR" + rand.nextInt(10000);
+                    String query = props.getProperty("updatepreviousresult") + "('" + formatter.format(date)
+                            + "','" + username + "','" + productnames + "'," + finalamount + ",'" + random + "')";
+                    int insert = DbUtil.getupdateQueryResult(query, con);
+                    if (insert != 0) {
+                        JOptionPane.showMessageDialog(this, "added to history");
+                        JOptionPane.showMessageDialog(this, "Thank you for purchase visit again :)");
+                        this.dispose();
+                        SalePage sp = new SalePage(username);
+                        sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        sp.setVisible(true);
+                        sp.setBackground(Color.LIGHT_GRAY);
 
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Previours order tables not updated");
+                    }
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Previours order tables not updated");
+                JOptionPane.showMessageDialog(null, "you dont have any Items in cart to do transaction Please Add items to Cart");
             }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        this.setEnabled(false);
-
-        HistoryTransanctions historytransanctions = new HistoryTransanctions(this, username);
-        historytransanctions.setVisible(true);
+        if (evt.getSource() == jButton4) {
+            this.setEnabled(false);
+            HistoryTransanctions historytransanctions = new HistoryTransanctions(this, username);
+            historytransanctions.setVisible(true);
+            historytransanctions.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -329,22 +334,16 @@ public class FinalOrderPage extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FinalOrderPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FinalOrderPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FinalOrderPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FinalOrderPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FinalOrderPage().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new FinalOrderPage().setVisible(true);
         });
     }
 

@@ -12,14 +12,12 @@ import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 /**
@@ -34,16 +32,18 @@ public class EditpopupForm extends javax.swing.JFrame {
     Connection con = null;
     Properties props;
     int productid;
+    String username;
     AdminPage admin;
 
-    public EditpopupForm(int productid, AdminPage admin) {
-        this.admin = admin;
+    public EditpopupForm(int productid, String username,AdminPage admin) {
+       this.username=username;
+       this.admin=admin;
         this.productid = productid;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setSelectedProductDetails();
+        
 
     }
 
@@ -202,14 +202,10 @@ public class EditpopupForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            ResultSet Rs = DbUtil.getQueryResult(props.getProperty("distinctproductid"), con);
-            ArrayList<Integer> Porductidslist = new ArrayList<>();
-            while (Rs.next()) {
-                Porductidslist.add(Rs.getInt("productid"));
 
-            }
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (evt.getSource() == jButton1) {
+
             if (Validateform()) {
 
                 ProductBean newbean = createNewBean();
@@ -218,27 +214,30 @@ public class EditpopupForm extends javax.swing.JFrame {
                 if (rowsinserted != 0) {
                     JOptionPane.showMessageDialog(this, "updated successfully");
                     this.dispose();
-                    AdminPage admin = new AdminPage();
-                    admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    admin.setVisible(true);
+                    admin.dispose();
+                    AdminPage adminPage = new AdminPage(username);
+                    adminPage.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    adminPage.setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Not inserted");
+                    JOptionPane.showMessageDialog(this, "Not edited your product due to techinical issue");
                 }
 
             } else {
                 JOptionPane.showMessageDialog(this, "hey Please fill manadatery fields");
             }
 
-        } catch (SQLException ex) {
-            Logger.getLogger(PopupFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        this.dispose();
-        admin.setEnabled(true);
-        admin.setVisible(true);
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (evt.getSource() == jButton2) {
+            this.dispose();
+            admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            admin.setEnabled(true);
+            admin.setVisible(true);
+        }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -270,7 +269,7 @@ public class EditpopupForm extends javax.swing.JFrame {
         errorText.append(checkTestbox(jTextField6, false));
         errorText.append(checkTestbox(jTextField7, false));
         errorText.append(checkTestbox(jTextField8, false));
-        System.out.println(errorText.length() + "sandeep length");
+      
 
         return errorText.length() == 0;
 
@@ -312,7 +311,7 @@ public class EditpopupForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public void setSelectedProductDetails() {
+    private void setSelectedProductDetails() {
 
         ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
 
@@ -350,22 +349,16 @@ public class EditpopupForm extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EditpopupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EditpopupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EditpopupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(EditpopupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new EditpopupForm().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new EditpopupForm().setVisible(true);
         });
     }
 

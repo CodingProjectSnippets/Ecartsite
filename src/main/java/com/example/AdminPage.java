@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -38,11 +37,11 @@ public class AdminPage extends javax.swing.JFrame {
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
-        jLabel1.setText("Store Backend – Admin Personnel Login ("+username+")");
-         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
-            Date date = new Date();
-        jLabel3.setText("Today's Date : "+formatter.format(date));
-         this.getContentPane().setBackground(Color.LIGHT_GRAY);
+        jLabel1.setText("Store Backend – Admin Personnel Login (" + username + ")");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        Date date = new Date();
+        jLabel3.setText("Today's Date : " + formatter.format(date));
+        this.getContentPane().setBackground(Color.LIGHT_GRAY);
         table_update();
     }
 
@@ -118,7 +117,7 @@ public class AdminPage extends javax.swing.JFrame {
 
             },
             new String [] {
-                "productid", "product name", "price", "quantity", "barcode", "description", "unreason"
+                "productid", "product name", "price", "quantity", "barcode", "description", "Reason for out of Stock"
             }
         ) {
             Class[] types = new Class [] {
@@ -130,13 +129,6 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(1).setHeaderValue("product name");
-            jTable1.getColumnModel().getColumn(3).setHeaderValue("quantity");
-            jTable1.getColumnModel().getColumn(4).setHeaderValue("barcode");
-            jTable1.getColumnModel().getColumn(5).setHeaderValue("description");
-            jTable1.getColumnModel().getColumn(6).setHeaderValue("unreason");
-        }
 
         jButton2.setText("Edit");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -173,7 +165,7 @@ public class AdminPage extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(48, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton2)
@@ -200,10 +192,10 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -212,8 +204,10 @@ public class AdminPage extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         this.setEnabled(false);
-        PopupFrame popUpFrame = new PopupFrame();
+        PopupFrame popUpFrame = new PopupFrame(username,this);
         popUpFrame.setVisible(true);
+        popUpFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -222,28 +216,28 @@ public class AdminPage extends javax.swing.JFrame {
         int k = 0;
 
         if (str1 != null && !(str1.equals(""))) {
-            while (k == 0) {
+            while (k != 1) {
                 try {
                     int input = Integer.parseInt(str1);
-                    EditpopupForm editpopup = new EditpopupForm(input, this);
+                    EditpopupForm editpopup = new EditpopupForm(input, username,this);
                     this.setEnabled(false);
                     editpopup.setVisible(true);
+                    editpopup.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                     k = 1;
                 } catch (NumberFormatException e) {
 
                     str1 = JOptionPane.showInputDialog("Please enter Valid number");
                     if (str1 == null) {
                         k = 1;
-                    }
-                    if (str1.equals("")) {
-                        JOptionPane.showMessageDialog(null, "please enter valid date");
+                    } else if (str1.equals("")) {
+                        JOptionPane.showMessageDialog(null, "please enter valid id");
                         k = 1;
                     }
 
                 }
             }
         } else if (str1.equals("")) {
-            JOptionPane.showMessageDialog(null, "please enter valid date");
+            JOptionPane.showMessageDialog(null, "please enter valid id edit");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -252,20 +246,39 @@ public class AdminPage extends javax.swing.JFrame {
         SalePage sp = new SalePage(username);
         sp.setVisible(true);
         sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        sp.setBackground(Color.LIGHT_GRAY);
 
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String str1 = JOptionPane.showInputDialog("Please enter product id to delete");
-        if (str1 != null) {
-            int result = DbUtil.getupdateQueryResult(props.getProperty("deleteproductquery") + str1, con);
-            if (result != 0) {
-                JOptionPane.showMessageDialog(this, "deleted successfully");
-                table_update();
-            } else {
-                JOptionPane.showMessageDialog(this, "not deleted");
+        String str2 = JOptionPane.showInputDialog("Please enter product id to delete");
+        int k = 0;
+        if (str2 != null && !(str2.equals(""))) {
+            while (k != 1) {
+                try {
+                    int id = Integer.parseInt(str2);
+                    int result = DbUtil.getupdateQueryResult(props.getProperty("deleteproductquery") + id, con);
+                    if (result != 0) {
+                        JOptionPane.showMessageDialog(this, "deleted successfully");
+                        table_update();
+                        k=1;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "not deleted");
+                    }
+                } catch (NumberFormatException e) {
+                    str2 = JOptionPane.showInputDialog("Please enter Valid number");
+                    if (str2 == null) {
+                        k = 1;
+                    } else if (str2.equals("")) {
+                        JOptionPane.showMessageDialog(null, "please enter valid id");
+                        k = 1;
+                    }
+                }
             }
+        } else if (str2.equals("")) {
+
+            JOptionPane.showMessageDialog(null, "please enter valid id edit");
         }
 
 
@@ -315,6 +328,7 @@ public class AdminPage extends javax.swing.JFrame {
             CC = RSMD.getColumnCount();
             DefaultTableModel DFT = (DefaultTableModel) jTable1.getModel();
             jTable1.setEnabled(false);
+            jTable1.setRowHeight(30);
 
             DFT.setRowCount(0);
 

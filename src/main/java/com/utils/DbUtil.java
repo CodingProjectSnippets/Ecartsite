@@ -28,19 +28,19 @@ public class DbUtil {
 
     public static Connection getDbConnection() {
         // EmbeddedDriver e;
-        try {
-            String driver = CommonUtilities.getProps().getProperty("derbydriver");
-            System.out.println(driver);
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-            con = DriverManager.getConnection("jdbc:derby:" + driver, "root", "root");
+        if (con == null) {
+            try {
+                String driver = CommonUtilities.getProps().getProperty("derbydriver");
+                Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+                con = DriverManager.getConnection("jdbc:derby:" + driver, "root", "root");
 
-            System.out.println("Connected To Derby Database!" + con);
+                System.out.println("Connected To Derby Database!" + con);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(DbUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DbUtil.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(DbUtil.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+
         return con;
     }
 
@@ -86,18 +86,18 @@ public class DbUtil {
         }
         return 0;
     }
+
     public static int editqueryResult(String query, ProductBean bean) {
         try {
             PreparedStatement pstmt = con.prepareStatement(query);
 
-           
             pstmt.setString(1, bean.getProductname());
             pstmt.setDouble(2, bean.getPrice());
             pstmt.setInt(3, bean.getQuantity());
             pstmt.setString(4, bean.getBarcode());
             pstmt.setString(5, bean.getDescription());
             pstmt.setString(6, bean.getUnreason());
-             pstmt.setInt(7, bean.getProductid());
+            pstmt.setInt(7, bean.getProductid());
             return pstmt.executeUpdate();
 
         } catch (SQLException ex) {
