@@ -42,6 +42,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
     Properties props;
 
     LoginFrmae() {
+
         setLayoutManager();
         showPassword.setBackground(Color.lightGray);
         setLocationAndSize();

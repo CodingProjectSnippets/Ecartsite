@@ -6,7 +6,9 @@
 package com.example;
 
 import java.io.IOException;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
