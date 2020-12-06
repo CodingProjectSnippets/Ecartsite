@@ -35,15 +35,27 @@ public class SalePage extends javax.swing.JFrame {
      */
     ArrayList<ProductBean> productlist;
     DatabaseValues dbvalues;
+    String username;
 
-    public SalePage() {
+    public SalePage(String userName) {
+        this.username = userName;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
         initComponents();
         table_update();
         productlist = new ArrayList<>();
         dbvalues = new DatabaseValues();
-        //jButton3.setVisible(true);
+        validateAdmin();
+        
+    }
+    public void validateAdmin(){
+        if (!username.equals("sandeep")) {
+            jButton3.setVisible(false);
+        }
+    }
+
+    public SalePage() {
+
     }
 
     /**
@@ -276,7 +288,7 @@ public class SalePage extends javax.swing.JFrame {
         // TODO Finalorderadd your handling code here:
         if (productlist.size() != 0) {
             this.dispose();
-            FinalOrderPage fp = new FinalOrderPage(productlist);
+            FinalOrderPage fp = new FinalOrderPage(productlist, username);
             //fp.addproducts(productlist);
             this.setEnabled(false);
             fp.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -344,6 +356,7 @@ public class SalePage extends javax.swing.JFrame {
             ResultSetMetaData RSMD = Rs.getMetaData();
             CC = RSMD.getColumnCount();
             DefaultTableModel DFT = (DefaultTableModel) jTable1.getModel();
+            jTable1.setRowHeight(30);
             jTable1.setEnabled(false);
 
             DFT.setRowCount(0);

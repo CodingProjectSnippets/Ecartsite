@@ -11,8 +11,11 @@ import com.utils.PropertiesReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -30,8 +33,10 @@ public class FinalOrderPage extends javax.swing.JFrame {
     Connection con = null;
     Properties props;
     ArrayList<ProductBean> productlist;
+    String username;
 
-    public FinalOrderPage(ArrayList<ProductBean> productlist) {
+    public FinalOrderPage(ArrayList<ProductBean> productlist, String username) {
+        this.username = username;
         this.productlist = productlist;
         con = DbUtil.getDbConnection();
         props = PropertiesReader.readPropertiesFile();
@@ -42,7 +47,8 @@ public class FinalOrderPage extends javax.swing.JFrame {
     public FinalOrderPage() {
 
     }
- double finalamount=0;
+    double finalamount = 0;
+
     public void addproducts(ArrayList<ProductBean> productlist) {
         this.productlist = productlist;
     }
@@ -53,9 +59,10 @@ public class FinalOrderPage extends javax.swing.JFrame {
         try {
 
             DFT = (DefaultTableModel) jTable1.getModel();
+            jTable1.setRowHeight(30);
             jTable1.setEnabled(false);
             DFT.setRowCount(0);
-           
+
             for (ProductBean bean : productlist) {
                 Vector v2 = new Vector();
                 System.out.println(bean);
@@ -67,13 +74,12 @@ public class FinalOrderPage extends javax.swing.JFrame {
                 v2.add(bean.getBarcode());
                 v2.add(bean.getDescription());
                 v2.add(bean.getUnreason());
-                
 
                 DFT.addRow(v2);
-                finalamount=finalamount+bean.getCounter()*bean.getPrice();
-                
+                finalamount = finalamount + bean.getCounter() * bean.getPrice();
+
             }
-            jLabel4.setText("$"+String.valueOf(finalamount));
+            jLabel4.setText("$" + String.valueOf(finalamount));
         } catch (Exception e) {
         }
     }
@@ -98,6 +104,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -182,6 +189,13 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
         jLabel2.setText("Previous Orders");
 
+        jButton4.setText("View History");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -189,8 +203,9 @@ public class FinalOrderPage extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jButton4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -198,9 +213,10 @@ public class FinalOrderPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap())
+                .addGap(28, 28, 28)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(jLabel1))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -217,13 +233,12 @@ public class FinalOrderPage extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         pack();
@@ -231,46 +246,69 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (evt.getSource() == jButton1) {
-           for (int i = 0; i < productlist.size(); i++) {
+            for (int i = 0; i < productlist.size(); i++) {
                 DFT.removeRow(i);
                 DFT.removeTableModelListener(jTable1);
-                  finalamount=finalamount-productlist.get(i).getPrice();
-                  jLabel4.setText("$"+String.valueOf(finalamount));
-                  
+                finalamount = finalamount - productlist.get(i).getPrice();
+                jLabel4.setText("$" + String.valueOf(finalamount));
+
             }
-                
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.setEnabled(false);
         this.dispose();
-        SalePage sp = new SalePage();
+        SalePage sp = new SalePage(username);
         sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
         sp.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    String productnames = "";
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String rawQuery = props.getProperty("updateproductsquantity");
         String updateCountQuery[] = rawQuery.split(";");
         int resultup = 0;
         for (ProductBean bean : productlist) {
+            productnames = productnames + bean.getProductname() + "-";
+
             int quantity = bean.getQuantity() - bean.getCounter();
             resultup = DbUtil.getupdateQueryResult(updateCountQuery[0] + quantity
                     + updateCountQuery[1] + bean.getProductid(), con);
 
         }
+        productnames = productnames.substring(0, productnames.length() - 1);
         if (resultup != 0) {
-
-            int exitcondition;
-            exitcondition = JOptionPane.showConfirmDialog(null,
-                    "Do you want to proceed?", "Select an Option...", JOptionPane.YES_NO_CANCEL_OPTION);
-            if (exitcondition == 0) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+            Random rand = new Random();
+            String random = "PUR" + rand.nextInt(10000);
+            String query = props.getProperty("updatepreviousresult") + "('" + formatter.format(date)
+                    + "','" + username + "','" + productnames + "'," + finalamount + ",'" + random + "')";
+            System.out.println(query);
+            int insert = DbUtil.getupdateQueryResult(query, con);
+            if (insert != 0) {
+                JOptionPane.showMessageDialog(this, "added to history");
+                JOptionPane.showMessageDialog(this, "Thank you for purchase visit again :)");
                 this.dispose();
-            }
+                SalePage sp = new SalePage(username);
+                sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                sp.setVisible(true);
 
+            } else {
+                JOptionPane.showMessageDialog(this, "Previours order tables not updated");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        this.setEnabled(false);
+
+        HistoryTransanctions historytransanctions = new HistoryTransanctions(this, username);
+        historytransanctions.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -311,6 +349,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -106,7 +106,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
                     //JOptionPane.showMessageDialog(this, "Login Successful");
                     this.setVisible(false);
                     this.dispose();
-                   SalePage sp = new SalePage();
+                    SalePage sp = new SalePage( userText);
                     sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     sp.setVisible(true);
 

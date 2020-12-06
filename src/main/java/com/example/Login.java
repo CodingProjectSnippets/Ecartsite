@@ -7,25 +7,23 @@ package com.example;
 
 import java.io.IOException;
 import javax.swing.JFrame;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  *
  * @author NEELA_kpwhyff
  */
+@SpringBootApplication
 public class Login {
 
     public static void main(String[] a) throws IOException {
 
-//        LoginFrmae frame = new LoginFrmae();
-//        frame.setTitle("Login Form");
-//        frame.setVisible(true);
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setResizable(false);
-        
-        SalePage sp = new SalePage();
-        sp.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        sp.setVisible(true);
+        LoginFrmae frame = new LoginFrmae();
+        frame.setTitle("Login Form");
+        frame.setVisible(true);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
     }
 
