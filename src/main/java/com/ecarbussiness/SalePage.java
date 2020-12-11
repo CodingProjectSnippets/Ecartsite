@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.example;
+package com.ecarbussiness;
 
 import com.beans.DatabaseValues;
 import com.beans.ProductBean;
@@ -57,7 +57,18 @@ public class SalePage extends javax.swing.JFrame {
     }
 
     private void validateAdmin() {
-        if (!username.equals(props.getProperty("adminname"))) {
+        String role = "";
+         try {
+             String usernamee=username.toLowerCase();
+            ResultSet result = DbUtil.getQueryResult(props.getProperty("adminquery") + "'"+usernamee+"'", con);
+            while (result.next()) {
+                role=result.getString("role");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SalePage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (!role.equals(props.getProperty("adminname"))) {
             jButton3.setVisible(false);
         }
     }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.example;
+package com.ecarbussiness;
 
 /**
  *
@@ -109,7 +109,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
                     dbPwd.add(result.getString("password"));
                 }
 
-                if (dbUsername.contains(userText) && dbPwd.contains(pwdText)) {
+                if (dbPwd.contains(pwdText) && dbUsername.contains(userText.toLowerCase())) {
                     //JOptionPane.showMessageDialog(this, "Login Successful");
                     this.setVisible(false);
                     this.dispose();
