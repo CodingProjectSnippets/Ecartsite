@@ -311,6 +311,9 @@ public class EditpopupForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    
+    
+    //Creating form for Editing
     private void setSelectedProductDetails() {
 
         ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
@@ -318,7 +321,7 @@ public class EditpopupForm extends javax.swing.JFrame {
         setForm(result);
 
     }
-
+// Adding seleted item from Db to Form
     public void setForm(ResultSet result) {
         try {
             while (result.next()) {

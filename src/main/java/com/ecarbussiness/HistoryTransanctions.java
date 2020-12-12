@@ -29,7 +29,7 @@ public class HistoryTransanctions extends javax.swing.JFrame {
     Properties props;
     FinalOrderPage finalOrderPage;
     String username;
-
+// preparing data for Histoiry
     public HistoryTransanctions(FinalOrderPage finalOrderPage, String username) {
         this.username = username;
         this.finalOrderPage = finalOrderPage;
@@ -162,7 +162,7 @@ public class HistoryTransanctions extends javax.swing.JFrame {
             new HistoryTransanctions().setVisible(true);
         });
     }
-
+// adding user History to the popup
     private void setHistorydata() {
         int CC;
         try {

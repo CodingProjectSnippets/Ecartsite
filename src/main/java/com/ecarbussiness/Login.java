@@ -17,7 +17,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Login {
 
     public static void main(String[] a) throws IOException {
-
+       
+        //creating new object to swith to login page Frame
         LoginFrmae frame = new LoginFrmae();
         frame.setTitle("Login Form");
         frame.setVisible(true);

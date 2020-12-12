@@ -51,6 +51,8 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
     DefaultTableModel DFT;
 
+    
+    // Displaying Selected Product
     private void displayproducts() {
 
         try {
@@ -235,7 +237,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+//Adding Remove Functionality for the Button
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (evt.getSource() == jButton1) {
             if (!productlist.isEmpty()) {
@@ -253,7 +255,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
+//Returning back to sales page
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (evt.getSource() == jButton2) {
             this.setEnabled(false);
@@ -308,7 +310,7 @@ public class FinalOrderPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-
+//Showing History Records
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if (evt.getSource() == jButton4) {
             this.setEnabled(false);

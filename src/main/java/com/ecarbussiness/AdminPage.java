@@ -31,6 +31,7 @@ public class AdminPage extends javax.swing.JFrame {
     Connection con = null;
     Properties props;
     String username;
+//Adding Requirements for Admin Page
 
     public AdminPage(String username) {
         this.username = username;
@@ -200,17 +201,17 @@ public class AdminPage extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+//Displaying Popup for Adding new Item
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         this.setEnabled(false);
-        PopupFrame popUpFrame = new PopupFrame(username,this);
+        PopupFrame popUpFrame = new PopupFrame(username, this);
         popUpFrame.setVisible(true);
         popUpFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
-
+//Adding Edit Popup functionaloity
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String str1 = JOptionPane.showInputDialog("Please enter product id to edit");
         int k = 0;
@@ -219,7 +220,7 @@ public class AdminPage extends javax.swing.JFrame {
             while (k != 1) {
                 try {
                     int input = Integer.parseInt(str1);
-                    EditpopupForm editpopup = new EditpopupForm(input, username,this);
+                    EditpopupForm editpopup = new EditpopupForm(input, username, this);
                     this.setEnabled(false);
                     editpopup.setVisible(true);
                     editpopup.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -241,6 +242,7 @@ public class AdminPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    //back to Sales page when Order cancelled
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         this.dispose();
         SalePage sp = new SalePage(username);
@@ -251,6 +253,7 @@ public class AdminPage extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    // Deleting product
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String str2 = JOptionPane.showInputDialog("Please enter product id to delete");
         int k = 0;
@@ -262,7 +265,7 @@ public class AdminPage extends javax.swing.JFrame {
                     if (result != 0) {
                         JOptionPane.showMessageDialog(this, "deleted successfully");
                         table_update();
-                        k=1;
+                        k = 1;
                     } else {
                         JOptionPane.showMessageDialog(this, "not deleted");
                     }
@@ -318,6 +321,7 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
     }
+// Updating Cart Items on each transactions
 
     private void table_update() {
         int CC;

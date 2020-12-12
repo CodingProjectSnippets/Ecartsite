@@ -37,6 +37,7 @@ public class SalePage extends javax.swing.JFrame {
     ArrayList<ProductBean> productlist;
     DatabaseValues dbvalues;
     String username;
+//Setting up sales Page requirements
 
     public SalePage(String userName) {
 
@@ -56,18 +57,19 @@ public class SalePage extends javax.swing.JFrame {
 
     }
 
+    //Validating user whether to display admin button or not
     private void validateAdmin() {
         String role = "";
-         try {
-             String usernamee=username.toLowerCase();
-            ResultSet result = DbUtil.getQueryResult(props.getProperty("adminquery") + "'"+usernamee+"'", con);
+        try {
+            String usernamee = username.toLowerCase();
+            ResultSet result = DbUtil.getQueryResult(props.getProperty("adminquery") + "'" + usernamee + "'", con);
             while (result.next()) {
-                role=result.getString("role");
+                role = result.getString("role");
             }
         } catch (SQLException ex) {
             Logger.getLogger(SalePage.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         if (!role.equals(props.getProperty("adminname"))) {
             jButton3.setVisible(false);
         }
@@ -203,7 +205,7 @@ public class SalePage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
+// Adding item to the cart Functionality
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (evt.getSource() == jButton1) {
             String str1 = JOptionPane.showInputDialog("Please enter product number");
@@ -285,7 +287,7 @@ public class SalePage extends javax.swing.JFrame {
         }
 
     }
-
+  //Adding Product to the Cart
     public void addProduct(int productid) {
         try {
             ResultSet result = DbUtil.getQueryResult(props.getProperty("selecctedproductquery") + productid, con);
@@ -312,7 +314,7 @@ public class SalePage extends javax.swing.JFrame {
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+//Placing order for transaction
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO Finalorderadd your handling code here:
         if (evt.getSource() == jButton2) {
@@ -328,7 +330,7 @@ public class SalePage extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
+     //Displaying Admin Page
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (evt.getSource() == jButton3) {
@@ -371,6 +373,8 @@ public class SalePage extends javax.swing.JFrame {
     Connection con = null;
     Properties props;
 
+    
+    //Upating Table Whenever Change Occur in the Transaction
     private void table_update() {
         int CC;
         try {

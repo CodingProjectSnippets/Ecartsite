@@ -40,7 +40,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
 
     Connection con = null;
     Properties props;
-
+//Initialising all required properties for Login page
     LoginFrmae() {
 
         setLayoutManager();
@@ -58,7 +58,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
 
         container.setLayout(null);
     }
-
+   //Setting up all fields required for  Login page
     private void setLocationAndSize() {
         Font font = new Font("Courier", Font.BOLD, 16);
         LoginLabel.setFont(font);
@@ -72,7 +72,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
         resetButton.setBounds(650, 300, 100, 30);
 
     }
-
+//Adding Fields to the Container
     private void addComponentsToContainer() {
         container.add(LoginLabel);
         container.add(userLabel);
@@ -89,7 +89,7 @@ public class LoginFrmae extends JFrame implements ActionListener {
         resetButton.addActionListener(this);
         showPassword.addActionListener(this);
     }
-
+//Checking Login Functionality
     @Override
     public void actionPerformed(ActionEvent e) {
         //Coding Part of LOGIN button
